@@ -96,6 +96,9 @@
                     <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
                     <span>Portal Guru</span>
                 </button>
+                <button id="tabBtnRekod" onclick="switchTab('rekod')" class="px-3.5 py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-violet-300" aria-hidden="true"></i><span>Rekod Tugasan</span>
+                </button>
                 <button id="tabBtnRumusan" onclick="switchTab('rumusan')" class="px-3.5 py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition-all duration-200 flex items-center gap-2">
                     <i class="fa-solid fa-chart-pie text-emerald-400"></i>
                     <span>Rumusan Pentadbiran</span>
@@ -366,20 +369,6 @@
                     </form>
                 </div>
 
-                <section id="manageTasksPanel" aria-labelledby="manageTitle">
-<div class="manage-hero"><div class="manage-hero-copy"><span class="manage-eyebrow">PORTAL GURU / PENGURUSAN TUGASAN</span><h3 id="manageTitle"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Urus Tugasan Dihantar</h3><p>Semak, kemas kini dan urus pembelajaran kelas anda.</p></div><button type="button" id="refreshManagedTasks" class="manage-refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Muat semula</button></div>
-<div class="manage-body">
-<div class="manage-filter-heading"><div><span class="manage-step">01</span><strong>Cari tugasan anda</strong></div><button type="button" id="resetManagedFilters">Reset penapis</button></div>
-<div class="manage-filters">
-<label class="manage-filter"><span><i class="fa-solid fa-school" aria-hidden="true"></i> Kelas</span><select id="manageFilterKelas"><option value="">Semua kelas</option></select></label>
-<label class="manage-filter"><span><i class="fa-solid fa-user" aria-hidden="true"></i> Nama guru</span><select id="manageFilterGuru"><option value="">Semua guru</option></select></label>
-<label class="manage-filter"><span><i class="fa-solid fa-book" aria-hidden="true"></i> Subjek</span><select id="manageFilterSubjek"><option value="">Semua subjek</option></select></label>
-<label class="manage-filter"><span><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Tarikh</span><input id="manageFilterTarikh" type="date"></label>
-<label class="manage-filter manage-search"><span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Kata kunci</span><input id="manageTaskSearch" type="search" placeholder="Taip tajuk, kelas atau nama guru..."></label>
-</div>
-<div class="manage-results-bar"><p id="manageTaskStatus" role="status" aria-live="polite"></p><span class="manage-hint">Pilih Edit untuk membuat pembetulan</span></div>
-<div id="manageTaskList"></div>
-</div></section>
                 <!-- SUB-PANEL 2: STATUS SEMAKAN MURID -->
                 <div id="panelSemakanMurid" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
                     <div class="border-b border-slate-200 pb-3 flex justify-between items-center">
@@ -437,6 +426,37 @@
                     </div>
                 </div>
 
+            </div>
+        </section>
+
+        <section id="tabRekod" class="hidden space-y-6">
+            <div id="rekodLoginCard" class="record-login">
+                <div class="record-login-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></div>
+                <span class="record-login-kicker">AKSES GURU</span>
+                <h2>Log Masuk Rekod Tugasan</h2>
+                <p>Masukkan kod guru untuk mencari, mengedit dan memadam tugasan.</p>
+                <form onsubmit="handleRekodLogin(event)">
+                    <label for="rekodPasswordInput">Kod log masuk</label>
+                    <input id="rekodPasswordInput" type="password" placeholder="Masukkan kod guru" autocomplete="current-password" required>
+                    <button type="submit"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Log Masuk</button>
+                </form>
+            </div>
+            <div id="rekodDashboard" class="hidden">
+                <div class="record-session"><span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Sesi guru aktif</span><button type="button" onclick="logoutGuru()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log keluar</button></div>
+                <section id="manageTasksPanel" aria-labelledby="manageTitle">
+<div class="manage-hero"><div class="manage-hero-copy"><span class="manage-eyebrow">REKOD TUGASAN / PENGURUSAN GURU</span><h3 id="manageTitle"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Rekod Tugasan</h3><p>Semak, kemas kini dan urus pembelajaran kelas anda.</p></div><button type="button" id="refreshManagedTasks" class="manage-refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Muat semula</button></div>
+<div class="manage-body">
+<div class="manage-filter-heading"><div><span class="manage-step">01</span><strong>Cari tugasan anda</strong></div><button type="button" id="resetManagedFilters">Reset penapis</button></div>
+<div class="manage-filters">
+<label class="manage-filter"><span><i class="fa-solid fa-school" aria-hidden="true"></i> Kelas</span><select id="manageFilterKelas"><option value="">Semua kelas</option></select></label>
+<label class="manage-filter"><span><i class="fa-solid fa-user" aria-hidden="true"></i> Nama guru</span><select id="manageFilterGuru"><option value="">Semua guru</option></select></label>
+<label class="manage-filter"><span><i class="fa-solid fa-book" aria-hidden="true"></i> Subjek</span><select id="manageFilterSubjek"><option value="">Semua subjek</option></select></label>
+<label class="manage-filter"><span><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Tarikh</span><input id="manageFilterTarikh" type="date"></label>
+<label class="manage-filter manage-search"><span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Kata kunci</span><input id="manageTaskSearch" type="search" placeholder="Taip tajuk, kelas atau nama guru..."></label>
+</div>
+<div class="manage-results-bar"><p id="manageTaskStatus" role="status" aria-live="polite"></p><span class="manage-hint">Pilih Edit untuk membuat pembetulan</span></div>
+<div id="manageTaskList"></div>
+</div></section>
             </div>
         </section>
 
@@ -628,7 +648,7 @@
         // Senarai Guru CSV Link
         const GURU_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFly8MED_Uxqw7ffrr-uDGxSt8qOLDJfCneKWZVNwHxSYQcWjOJCpIJpAoDFve_wBSvvjYEF7ce_Vx/pub?gid=0&single=true&output=csv";
 
-        const GURU_PASSWORD = "JBA1077";
+        const GURU_PASSWORD = "JAB1077";
 
         // GLOBAL APP STATE
         let rawMuridData = []; 
@@ -876,26 +896,19 @@
         }
 
         function switchTab(tabName) {
-            document.getElementById('tabMurid').classList.add('hidden');
-            document.getElementById('tabGuru').classList.add('hidden');
-            document.getElementById('tabRumusan').classList.add('hidden');
-
-            document.getElementById('tabBtnMurid').className = "px-3.5 py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition-all duration-200 flex items-center gap-2";
-            document.getElementById('tabBtnGuru').className = "px-3.5 py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition-all duration-200 flex items-center gap-2";
-            document.getElementById('tabBtnRumusan').className = "px-3.5 py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition-all duration-200 flex items-center gap-2";
-
-            if (tabName === 'murid') {
-                document.getElementById('tabMurid').classList.remove('hidden');
-                document.getElementById('tabBtnMurid').className = "px-3.5 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 bg-white text-sktd-navy shadow-sm";
-                loadMuridTugasan();
-            } else if (tabName === 'guru') {
-                document.getElementById('tabGuru').classList.remove('hidden');
-                document.getElementById('tabBtnGuru').className = "px-3.5 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 bg-white text-sktd-navy shadow-sm";
-            } else if (tabName === 'rumusan') {
-                document.getElementById('tabRumusan').classList.remove('hidden');
-                document.getElementById('tabBtnRumusan').className = "px-3.5 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 bg-white text-sktd-navy shadow-sm";
-                renderRumusan();
+            const tabs = {murid:['tabMurid','tabBtnMurid'],guru:['tabGuru','tabBtnGuru'],rekod:['tabRekod','tabBtnRekod'],rumusan:['tabRumusan','tabBtnRumusan']};
+            if (!tabs[tabName]) return;
+            for (const [name,[panelId,buttonId]] of Object.entries(tabs)) {
+                const active = name === tabName;
+                document.getElementById(panelId).classList.toggle('hidden', !active);
+                const button = document.getElementById(buttonId);
+                button.className = 'px-3.5 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ' + (active ? 'bg-white text-sktd-navy shadow-sm' : 'text-slate-300 hover:text-white');
+                button.setAttribute('aria-pressed', String(active));
             }
+            syncTeacherAccess();
+            if (tabName === 'murid') loadMuridTugasan();
+            if (tabName === 'rumusan') renderRumusan();
+            if (tabName === 'rekod' && isGuruLoggedIn && typeof renderManagedTasks === 'function') renderManagedTasks();
         }
 
         function loadMuridTugasan() {
@@ -1074,27 +1087,40 @@
             }
         }
 
-        function handleGuruLogin(e) {
-            e.preventDefault();
-            const pwd = document.getElementById('guruPasswordInput').value;
-            if (pwd === GURU_PASSWORD) {
-                isGuruLoggedIn = true;
-                if (typeof renderManagedTasks === 'function') renderManagedTasks();
-                document.getElementById('guruLoginCard').classList.add('hidden');
-                document.getElementById('guruDashboard').classList.remove('hidden');
-                showToast("Log masuk portal guru berjaya!", "success");
-            } else {
-                showToast("Kata laluan salah. Sila cuba lagi.", "danger");
+        function syncTeacherAccess() {
+            for (const [loginId,dashboardId] of [['guruLoginCard','guruDashboard'],['rekodLoginCard','rekodDashboard']]) {
+                document.getElementById(loginId).classList.toggle('hidden', isGuruLoggedIn);
+                document.getElementById(dashboardId).classList.toggle('hidden', !isGuruLoggedIn);
             }
         }
-
-        function logoutGuru() {
-            isGuruLoggedIn = false;
-            if (typeof closeTaskEditor === 'function') closeTaskEditor();
-            document.getElementById('guruDashboard').classList.add('hidden');
-            document.getElementById('guruLoginCard').classList.remove('hidden');
+        function loginTeacherFrom(inputId) {
+            const field = document.getElementById(inputId);
+            if (field.value !== GURU_PASSWORD) {
+                showToast('Kod log masuk salah. Sila cuba lagi.', 'danger');
+                field.focus();
+                return;
+            }
+            isGuruLoggedIn = true;
             document.getElementById('guruPasswordInput').value = '';
-            showToast("Anda telah keluar dari Portal Guru.", "info");
+            document.getElementById('rekodPasswordInput').value = '';
+            syncTeacherAccess();
+            if (typeof renderManagedTasks === 'function') renderManagedTasks();
+            showToast('Log masuk guru berjaya!', 'success');
+        }
+        function handleGuruLogin(e) { e.preventDefault(); loginTeacherFrom('guruPasswordInput'); }
+        function handleRekodLogin(e) { e.preventDefault(); loginTeacherFrom('rekodPasswordInput'); }
+        function logoutGuru() {
+            if (typeof taskMutationBusy !== 'undefined' && taskMutationBusy) {
+                showToast('Sila tunggu operasi tugasan selesai sebelum log keluar.', 'warning');
+                return;
+            }
+            if (typeof closeTaskEditor === 'function') closeTaskEditor();
+            isGuruLoggedIn = false;
+            syncTeacherAccess();
+            document.getElementById('guruPasswordInput').value = '';
+            document.getElementById('rekodPasswordInput').value = '';
+            if (typeof renderManagedTasks === 'function') renderManagedTasks();
+            showToast('Anda telah log keluar.', 'info');
         }
 
         function switchGuruSubTab(subTab) {

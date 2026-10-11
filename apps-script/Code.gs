@@ -1,4 +1,4 @@
-// SISTEM TUGASAN PDPR SKTD — BACKEND LENGKAP v3
+// SISTEM TUGASAN PDPR SKTD — BACKEND LENGKAP v5
 // Gantikan Code.gs asal. Jangan tambah doGet/doPost pendua.
 var SPREADSHEET_ID = '16kLuWnLZECEtTKD50XTbXVAHIKcgwHvzesC-vuF3DV0';
 var DRIVE_FOLDER_ID = '13YwZnpAOfPNUKVO04Gdu4Tt1Q7Dedszh';
@@ -87,8 +87,7 @@ function pdprHandleTaskEdit(e) {
   function result(body) { return ContentService.createTextOutput(JSON.stringify(body)).setMimeType(ContentService.MimeType.JSON); }
   var lock = LockService.getScriptLock();
   try {
-    var props = PropertiesService.getScriptProperties();
-    var password = props.getProperty('PDPR_TEACHER_PASSWORD') || 'JBA1077';
+    var password = 'JAB1077';
     if (typeof data.password !== 'string' || data.password !== password) throw new Error('Kata laluan guru tidak sah.');
     if (typeof data.id !== 'string' || !data.id.trim()) throw new Error('ID tugasan diperlukan.');
     lock.waitLock(20000);

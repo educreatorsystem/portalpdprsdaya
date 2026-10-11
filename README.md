@@ -1,10 +1,8 @@
-# Versi 4 — Paparan pengurusan tugasan
+# Versi 5 — Tab Rekod Tugasan
 
-Header gradient, kad tugasan, borang edit berbahagian, penapis kelas/guru/subjek/tarikh serta carian kata kunci. Penapis boleh digabungkan dan direset. Kemas kini fail laman di GitHub; Apps Script versi 3 tidak perlu diubah.
+Edit/Padam dipindah ke tab utama Rekod Tugasan. Penapis kelas, guru, subjek, tarikh dan kata kunci dikekalkan. Portal Guru dan Rekod Tugasan berkongsi sesi log masuk dengan kod JAB1077. Log keluar mengunci kedua-duanya.
 
-# PdPR SKTD — Versi 3: Edit dan Padam
-
-Kod Apps Script lengkap disertakan dalam `apps-script/Code.gs`. Ikuti `apps-script/PANDUAN_EDIT_PADAM.md` sebelum menggantikan fail laman di GitHub. Tiada kod tambahan berasingan diperlukan.
+WAJIB kemas kini Code.gs serta deployment Apps Script kerana kod log masuk telah berubah daripada JBA1077 kepada JAB1077. Kod v5 tidak lagi menggunakan Script Property PDPR_TEACHER_PASSWORD.
 
 # PdPR SK Taman Daya — PWA
 

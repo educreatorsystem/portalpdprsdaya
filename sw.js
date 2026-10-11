@@ -1,5 +1,5 @@
 const PREFIX='pdpr-sktd-'+new URL(self.registration.scope).pathname+'-';
-const CACHE=PREFIX+'v4';
+const CACHE=PREFIX+'v5';
 const FILES=['./','./index.html','./assets/theme.css','./assets/tailwind.js','./assets/papaparse.min.js','./assets/fontawesome.css','./assets/fa-solid-900.woff2','./pwa.js','./manage-tasks.js','./manifest.webmanifest','./assets/icons/icon-192.png','./assets/icons/icon-512.png','./assets/icons/maskable-512.png','./assets/icons/apple-touch-icon.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

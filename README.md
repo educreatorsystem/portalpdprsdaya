@@ -1,3 +1,7 @@
+# PdPR SKTD — Versi 3: Edit dan Padam
+
+Kod Apps Script lengkap disertakan dalam `apps-script/Code.gs`. Ikuti `apps-script/PANDUAN_EDIT_PADAM.md` sebelum menggantikan fail laman di GitHub. Tiada kod tambahan berasingan diperlukan.
+
 # PdPR SK Taman Daya — PWA
 
 ## Terbitkan melalui GitHub Pages
@@ -17,16 +21,16 @@ PWA memerlukan HTTPS (GitHub Pages menyediakannya). Membuka index.html melalui f
 
 ## Fungsi dan batas
 - Kata laluan guru dikekalkan mengikut tetapan terdahulu.
-- Semua URL Google Sheets dan Apps Script asal dikekalkan.
+- ID Google Sheet, folder Drive dan URL Apps Script asal dikekalkan. Senarai tugasan kini dibaca terus dari Apps Script.
 - Reka bentuk gradient, hover, paparan responsif, ikon buku dan tanda semak.
 - Selepas dibuka secara dalam talian dan cache siap, rangka aplikasi boleh dibuka semula di luar talian.
 - Data Google Sheets, video, imej bukti, logo sekolah dan penghantaran memerlukan internet. Data murid tidak disimpan dalam cache PWA. Tiada barisan penghantaran luar talian.
 - Butang pemasangan bergantung kepada sokongan pelayar; panduan manual disediakan.
-- Kemas kini: muat naik fail baharu dan tukar `v1` dalam sw.js kepada `v2` (dan seterusnya). Apabila tersedia, pengguna boleh memilih Kemas kini tersedia; simpan borang dahulu.
+- Kemas kini: muat naik fail baharu dan tukar `v3` dalam sw.js kepada `v4` (dan seterusnya). Apabila tersedia, pengguna boleh memilih Kemas kini tersedia; simpan borang dahulu.
 
 ## Nota pelaksanaan sedia ada
 Login guru masih disemak di JavaScript sisi pelayar, jadi kata laluan dapat dilihat dalam kod sumber. Ini bukan pengesahan pelayan. Untuk kawalan akses sebenar, sahkan pengguna dan operasi tulis di pelayan/Apps Script.
-Penghantaran asal menggunakan Apps Script no-cors; respons kejayaan pelayan tidak dapat dibaca oleh pelayar. Semak rekod dalam Google Sheet selepas penghantaran pertama di domain baharu. Ujian pakej ini tidak menghantar data sebenar.
+Penghantaran murid asal menggunakan Apps Script no-cors; respons kejayaan pelayan bagi penghantaran murid tidak dapat dibaca oleh pelayar. Simpan tugasan guru, edit dan padam kini memerlukan respons JSON kejayaan pelayan. Semak rekod dalam Google Sheet selepas penghantaran pertama di domain baharu. Ujian pakej ini tidak menghantar data sebenar.
 
 ## Fail
 index.html: sistem penuh

@@ -415,6 +415,16 @@
 
         <!-- ================= TAB 3: RUMUSAN PENTADBIR & GURU KELAS ================= -->
         <div id="tab-rumusan" class="space-y-6 hidden">
+          <form id="rumusan-login" onsubmit="loginRumusan(event)" class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-200 text-center space-y-4">
+            <div class="text-3xl text-blue-800"><i class="fa-solid fa-lock"></i></div>
+            <h2 class="text-xl font-bold">Log Masuk Rumusan</h2>
+            <p class="text-sm text-slate-500">Masukkan kata laluan untuk melihat rumusan.</p>
+            <input id="rumusan-password" type="password" required autocomplete="current-password" aria-label="Kata laluan Rumusan" placeholder="Kata laluan" class="w-full p-3 border rounded-xl text-center">
+            <button class="w-full p-3 bg-blue-800 text-white rounded-xl font-bold">Log Masuk</button>
+            <p id="rumusan-login-error" role="alert" class="text-sm text-red-600"></p>
+          </form>
+          <div id="rumusan-content" class="space-y-6" hidden>
+            <div class="flex justify-between items-center bg-blue-900 text-white p-4 rounded-xl"><strong>Rumusan PDPR</strong><button onclick="logoutRumusan()" class="px-4 py-2 bg-white/10 rounded-lg">Log Keluar</button></div>
             <!-- Header Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -487,6 +497,7 @@
                 </div>
             </div>
         </div>
+        </div>
 
         <!-- ================= TAB 4: BACKEND KOD APPSCRIPT & PANDUAN ================= -->
         <div id="tab-appscript" class="space-y-6 hidden">
@@ -503,119 +514,176 @@
                     Berikut adalah kod **Google Apps Script** yang telah disesuaikan dengan ID Sheet <code>16kLuWnLZECEtTKD50XTbXVAHIKcgwHvzesC-vuF3DV0</code> dan ID Folder Drive <code>13YwZnpAOfPNUKVO04Gdu4Tt1Q7Dedszh</code> anda. Tampalkan kod ini ke dalam editor AppsScript anda untuk menyimpan data dan gambar secara berpusat.
                 </p>
 
-                <pre id="appscript-code-block" class="bg-slate-900 text-green-400 p-4 rounded-xl text-xs font-mono overflow-x-auto max-h-96 custom-scrollbar border border-slate-800">
-/* ====================================================================
- * SISTEM TUGASAN PDPR SK TAMAN DAYA - BACKEND GOOGLE APPS SCRIPT
- * SHEET ID : 16kLuWnLZECEtTKD50XTbXVAHIKcgwHvzesC-vuF3DV0
- * DRIVE ID : 13YwZnpAOfPNUKVO04Gdu4Tt1Q7Dedszh
- * ==================================================================== */
+                <pre id="appscript-code-block" class="bg-slate-900 text-green-400 p-4 rounded-xl text-xs font-mono overflow-x-auto max-h-96 custom-scrollbar border border-slate-800">/**
+ * PDPR SK TAMAN DAYA — backend serasi dengan PDPR_SKTD_PWA_GitHub.zip
+ * Gantikan keseluruhan Code.gs. Jangan tambah doGet/doPost pendua.
+ * Jalankan semakTetapan() sekali, kemudian kemas kini deployment Web app.
+ * Frontend lama menggunakan no-cors: semak hasil simpan melalui CSV/Sheet.
+ * Kod login JBA1077 dalam frontend bukan pengesahan identiti di pelayan.
+ */
+var PDPR = {
+  spreadsheetId: &#x27;16kLuWnLZECEtTKD50XTbXVAHIKcgwHvzesC-vuF3DV0&#x27;,
+  folderId: &#x27;13YwZnpAOfPNUKVO04Gdu4Tt1Q7Dedszh&#x27;,
+  tasksGid: 925149612,
+  submissionsGid: 1661504502,
+  studentsGid: 288612582,
+  maxImageBytes: 5 * 1024 * 1024
+};
+var TASK_HEADERS = [&#x27;ID&#x27;,&#x27;Tarikh&#x27;,&#x27;Guru&#x27;,&#x27;Kelas&#x27;,&#x27;Subjek&#x27;,&#x27;Tajuk&#x27;,&#x27;T1_Ayat&#x27;,&#x27;T1_Video&#x27;,&#x27;T1_Kuiz&#x27;,&#x27;T2_Ayat&#x27;,&#x27;T2_Video&#x27;,&#x27;T2_Kuiz&#x27;,&#x27;Timestamp&#x27;];
+var SUB_HEADERS = [&#x27;ID&#x27;,&#x27;TaskId&#x27;,&#x27;Tarikh&#x27;,&#x27;Kelas&#x27;,&#x27;NamaMurid&#x27;,&#x27;Subjek&#x27;,&#x27;Status&#x27;,&#x27;GambarUrl&#x27;,&#x27;Timestamp&#x27;];
 
-const SPREADSHEET_ID = '16kLuWnLZECEtTKD50XTbXVAHIKcgwHvzesC-vuF3DV0';
-const FOLDER_DRIVE_ID = '13YwZnpAOfPNUKVO04Gdu4Tt1Q7Dedszh';
+function doGet() {
+  return json_({status:&#x27;success&#x27;, message:&#x27;Backend PDPR SK Taman Daya aktif.&#x27;, version:&#x27;4.1&#x27;});
+}
 
 function doPost(e) {
+  var lock = LockService.getScriptLock();
   try {
-    const data = JSON.parse(e.postData.contents);
-    const action = data.action;
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-
-    if (action === 'save_tugasan') {
-      let sheet = ss.getSheetByName('TUGASAN');
-      if (!sheet) {
-        sheet = ss.insertSheet('TUGASAN');
-        sheet.appendRow(['ID', 'Tarikh', 'Nama Guru', 'Subjek', 'Kelas', 'Tajuk', 'T1 Ayat', 'T1 Video', 'T1 Kuiz', 'T2 Ayat', 'T2 Video', 'T2 Kuiz', 'Masa Dicipta']);
-      }
-      
-      const id = data.id || 'TUG-' + Date.now();
-      
-      if (data.isEdit) {
-        // Edit Tugasan
-        const rows = sheet.getDataRange().getValues();
-        for (let i = 1; i < rows.length; i++) {
-          if (rows[i][0] == id) {
-            sheet.getRange(i + 1, 2, 1, 11).setValues([[
-              data.tarikh, data.namaGuru, data.subjek, data.kelas, data.tajuk,
-              data.t1Ayat, data.t1Video, data.t1Kuiz, data.t2Ayat, data.t2Video, data.t2Kuiz
-            ]]);
-            break;
-          }
-        }
-      } else {
-        // Tugasan Baru
-        sheet.appendRow([
-          id, data.tarikh, data.namaGuru, data.subjek, data.kelas, data.tajuk,
-          data.t1Ayat, data.t1Video, data.t1Kuiz, data.t2Ayat, data.t2Video, data.t2Kuiz,
-          new Date()
-        ]);
-      }
-
-      return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: id }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (action === 'delete_tugasan') {
-      let sheet = ss.getSheetByName('TUGASAN');
-      if (sheet) {
-        const rows = sheet.getDataRange().getValues();
-        for (let i = 1; i < rows.length; i++) {
-          if (rows[i][0] == data.id) {
-            sheet.deleteRow(i + 1);
-            break;
-          }
-        }
-      }
-      return ContentService.createTextOutput(JSON.stringify({ status: 'deleted' }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (action === 'submit_murid') {
-      let sheet = ss.getSheetByName('PENGHANTARAN_MURID');
-      if (!sheet) {
-        sheet = ss.insertSheet('PENGHANTARAN_MURID');
-        sheet.appendRow(['ID', 'Masa', 'Tarikh Tugasan', 'Nama Murid', 'Kelas', 'Subjek', 'Tajuk', 'Status', 'URL Gambar Drive']);
-      }
-
-      let imageUrl = '';
-      if (data.imageBase64) {
-        try {
-          const folder = DriveApp.getFolderById(FOLDER_DRIVE_ID);
-          const contentType = data.imageBase64.substring(5, data.imageBase64.indexOf(';'));
-          const bytes = Utilities.base64Decode(data.imageBase64.substr(data.imageBase64.indexOf('base64,') + 7));
-          const blob = Utilities.newBlob(bytes, contentType, 'BUKTI_' + data.namaMurid.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg');
-          const file = folder.createFile(blob);
-          file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          imageUrl = file.getUrl();
-        } catch (err) {
-          imageUrl = 'Ralat Muat Naik Gambar: ' + err.message;
-        }
-      }
-
-      sheet.appendRow([
-        'SUB-' + Date.now(),
-        new Date(),
-        data.tarikh,
-        data.namaMurid,
-        data.kelas,
-        data.subjek,
-        data.tajuk,
-        'SELESAI',
-        imageUrl
-      ]);
-
-      return ContentService.createTextOutput(JSON.stringify({ status: 'success', imageUrl: imageUrl }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
+    if (!e || !e.postData || !e.postData.contents) throw new Error(&#x27;Tiada data POST diterima.&#x27;);
+    if (e.postData.contents.length &gt; 7500000) throw new Error(&#x27;Data terlalu besar. Had gambar ialah 5 MB.&#x27;);
+    var data = JSON.parse(e.postData.contents);
+    if (!data || typeof data !== &#x27;object&#x27; || Array.isArray(data)) throw new Error(&#x27;Format data tidak sah.&#x27;);
+    if ([&#x27;save_tugasan&#x27;,&#x27;delete_tugasan&#x27;,&#x27;submit_murid&#x27;].indexOf(data.action) &lt; 0) throw new Error(&#x27;Tindakan tidak dikenali.&#x27;);
+    lock.waitLock(30000);
+    var ss = SpreadsheetApp.openById(PDPR.spreadsheetId);
+    var result;
+    if (data.action === &#x27;save_tugasan&#x27;) result = saveTask_(ss, data);
+    if (data.action === &#x27;delete_tugasan&#x27;) result = deleteTask_(ss, data);
+    if (data.action === &#x27;submit_murid&#x27;) result = submitStudent_(ss, data);
+    SpreadsheetApp.flush();
+    return json_(result);
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    console.error(error.message);
+    return json_({status:&#x27;error&#x27;, message:error.message});
+  } finally {
+    if (lock.hasLock()) lock.releaseLock();
   }
 }
 
-function doGet(e) {
-  return ContentService.createTextOutput("Sistem PDPR SK Taman Daya Backend Active.");
+// Semakan konfigurasi sahaja: tidak mengubah atau memadam rekod.
+function semakTetapan() {
+  var ss = SpreadsheetApp.openById(PDPR.spreadsheetId);
+  var task = sheet_(ss, PDPR.tasksGid);
+  var sub = sheet_(ss, PDPR.submissionsGid);
+  schema_(task, TASK_HEADERS);
+  schema_(sub, SUB_HEADERS);
+  roster_(ss);
+  var folder = DriveApp.getFolderById(PDPR.folderId);
+  console.log(&#x27;Tetapan OK. Sheet: &#x27; + ss.getName() + &#x27;; Tugasan: &#x27; + task.getName() + &#x27;; Penghantaran: &#x27; + sub.getName() + &#x27;; Folder: &#x27; + folder.getName());
 }
-                </pre>
+
+function saveTask_(ss, d) {
+  var sheet = sheet_(ss, PDPR.tasksGid);
+  schema_(sheet, TASK_HEADERS);
+  var id = text_(d.id) || &#x27;TUG-&#x27; + Utilities.getUuid();
+  var kelas = required_(d.kelas, &#x27;Kelas&#x27;).toUpperCase();
+  var roster = roster_(ss);
+  if (!roster.some(function(r){return r.kelas === kelas;})) throw new Error(&#x27;Kelas tidak ditemui dalam senarai murid: &#x27; + kelas);
+  var row = [id, date_(d.tarikh), required_(d.namaGuru,&#x27;Nama guru&#x27;), kelas,
+    required_(d.subjek,&#x27;Subjek&#x27;), required_(d.tajuk,&#x27;Tajuk&#x27;), required_(d.t1Ayat,&#x27;Arahan tugasan 1&#x27;),
+    url_(d.t1Video), url_(d.t1Kuiz), text_(d.t2Ayat), url_(d.t2Video), url_(d.t2Kuiz), timestamp_()];
+  var rows = sheet.getDataRange().getDisplayValues();
+  var index = findId_(rows, id);
+  var editing = d.isEdit === true || d.isEdit === &#x27;true&#x27;;
+  if (editing &amp;&amp; index &lt; 0) throw new Error(&#x27;Tugasan untuk diedit tidak ditemui. Muat semula data.&#x27;);
+  if (!editing &amp;&amp; index &gt;= 0) return {status:&#x27;success&#x27;, id:id, duplicate:true};
+  var target = index &gt;= 0 ? index + 1 : sheet.getLastRow() + 1;
+  sheet.getRange(target,1,1,row.length).setValues([row.map(cell_)]);
+  return {status:&#x27;success&#x27;, id:id, message:editing?&#x27;Tugasan dikemas kini.&#x27;:&#x27;Tugasan disimpan.&#x27;};
+}
+
+function deleteTask_(ss, d) {
+  var id = required_(d.id,&#x27;ID tugasan&#x27;);
+  var sheet = sheet_(ss, PDPR.tasksGid);
+  schema_(sheet, TASK_HEADERS);
+  var index = findId_(sheet.getDataRange().getDisplayValues(), id);
+  if (index &lt; 0) return {status:&#x27;deleted&#x27;, id:id, alreadyAbsent:true};
+  sheet.deleteRow(index + 1);
+  // Rekod penghantaran murid dan fail Drive tidak dipadam secara automatik.
+  return {status:&#x27;deleted&#x27;, id:id};
+}
+
+function submitStudent_(ss, d) {
+  var taskSheet = sheet_(ss, PDPR.tasksGid);
+  var sheet = sheet_(ss, PDPR.submissionsGid);
+  schema_(taskSheet, TASK_HEADERS); schema_(sheet, SUB_HEADERS);
+  var nama = required_(d.namaMurid,&#x27;Nama murid&#x27;).toUpperCase();
+  var kelas = required_(d.kelas,&#x27;Kelas&#x27;).toUpperCase();
+  if (!roster_(ss).some(function(r){return r.nama === nama &amp;&amp; r.kelas === kelas;})) throw new Error(&#x27;Nama murid tidak sepadan dengan kelas dalam senarai murid.&#x27;);
+  var tasks = taskSheet.getDataRange().getDisplayValues().slice(1);
+  // PWA sedia ada menghantar tarikh, kelas, subjek dan tajuk; TaskId boleh digunakan oleh versi baharu.
+  var matches = tasks.filter(function(r){
+    if (text_(d.taskId)) return r[0] === text_(d.taskId) &amp;&amp; text_(r[3]).toUpperCase() === kelas;
+    return date_(r[1]) === date_(d.tarikh) &amp;&amp; text_(r[3]).toUpperCase() === kelas &amp;&amp;
+      text_(r[4]).toUpperCase() === text_(d.subjek).toUpperCase() &amp;&amp; text_(r[5]) === text_(d.tajuk);
+  });
+  if (matches.length !== 1) throw new Error(&#x27;Tugasan tidak ditemui atau terdapat tugasan serupa. Muat semula data dan semak ID tugasan.&#x27;);
+  var task = matches[0];
+  var rows = sheet.getDataRange().getDisplayValues();
+  for (var i=1;i&lt;rows.length;i++) {
+    if (rows[i][1] === task[0] &amp;&amp; text_(rows[i][3]).toUpperCase() === kelas &amp;&amp; text_(rows[i][4]).toUpperCase() === nama) {
+      return {status:&#x27;success&#x27;, id:rows[i][0], duplicate:true, imageUrl:rows[i][7], message:&#x27;Penghantaran ini sudah direkodkan.&#x27;};
+    }
+  }
+  var file = null;
+  try {
+    if (text_(d.imageBase64)) file = uploadImage_(d.imageBase64);
+    var id = &#x27;SUB-&#x27; + Utilities.getUuid();
+    var imageUrl = file ? file.getUrl() : &#x27;&#x27;;
+    sheet.getRange(sheet.getLastRow()+1,1,1,9).setValues([[
+      id, task[0], date_(task[1]), kelas, nama, task[4], &#x27;SELESAI&#x27;, imageUrl, timestamp_()
+    ].map(cell_)]);
+    return {status:&#x27;success&#x27;, id:id, taskId:task[0], imageUrl:imageUrl};
+  } catch (err) {
+    if (file) { try { file.setTrashed(true); } catch (cleanupError) { console.error(&#x27;Fail gambar belum dipautkan kepada rekod.&#x27;); } }
+    throw err;
+  }
+}
+
+function uploadImage_(data) {
+  var match = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=\r\n]+)$/.exec(String(data));
+  if (!match) throw new Error(&#x27;Gambar mesti berformat JPG, PNG atau WebP.&#x27;);
+  var bytes = Utilities.base64Decode(match[2]);
+  if (!bytes.length || bytes.length &gt; PDPR.maxImageBytes) throw new Error(&#x27;Saiz gambar mesti antara 1 bait hingga 5 MB.&#x27;);
+  var ext = {&#x27;image/jpeg&#x27;:&#x27;jpg&#x27;,&#x27;image/png&#x27;:&#x27;png&#x27;,&#x27;image/webp&#x27;:&#x27;webp&#x27;}[match[1]];
+  var blob = Utilities.newBlob(bytes,match[1],&#x27;BUKTI_&#x27;+Utilities.getUuid()+&#x27;.&#x27;+ext);
+  // Fail mewarisi akses folder. Tidak menjadikan gambar murid awam secara automatik.
+  return DriveApp.getFolderById(PDPR.folderId).createFile(blob);
+}
+
+function roster_(ss) {
+  var rows = sheet_(ss, PDPR.studentsGid).getDataRange().getDisplayValues();
+  var h = rows[0].map(key_);
+  var k = h.indexOf(&#x27;KELAS&#x27;), n = h.indexOf(&#x27;NAMAMURID&#x27;);
+  if (k &lt; 0 || n &lt; 0) throw new Error(&#x27;Sheet murid memerlukan lajur KELAS dan NAMA MURID.&#x27;);
+  return rows.slice(1).map(function(r){return {kelas:text_(r[k]).toUpperCase(), nama:text_(r[n]).toUpperCase()};});
+}
+function sheet_(ss, gid) {
+  var sheet = ss.getSheets().filter(function(s){return s.getSheetId() === gid;})[0];
+  if (!sheet) throw new Error(&#x27;Tab dengan gid &#x27;+gid+&#x27; tidak ditemui. Semak ID Google Sheet dalam konfigurasi.&#x27;);
+  return sheet;
+}
+function schema_(sheet, expected) {
+  var actual = sheet.getRange(1,1,1,expected.length).getDisplayValues()[0];
+  for (var i=0;i&lt;expected.length;i++) {
+    if (key_(actual[i]) !== key_(expected[i])) throw new Error(&#x27;Susunan lajur &#x27;+sheet.getName()+&#x27; tidak sepadan. Lajur &#x27;+(i+1)+&#x27; mestilah &#x27;+expected[i]+&#x27;. Tiada data ditulis.&#x27;);
+  }
+}
+function findId_(rows,id) { for(var i=1;i&lt;rows.length;i++){if(rows[i][0]===id)return i;} return -1; }
+function text_(v) { return v == null ? &#x27;&#x27; : String(v).trim(); }
+function key_(v) { return text_(v).toUpperCase().replace(/[^A-Z0-9]/g,&#x27;&#x27;); }
+function required_(v,label) { v=text_(v); if(!v)throw new Error(label+&#x27; wajib diisi.&#x27;); if(v.length&gt;40000)throw new Error(label+&#x27; terlalu panjang.&#x27;); return v; }
+function date_(v) {
+  var s=text_(v), m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s);
+  if(m)s=m[3]+&#x27;-&#x27;+(&#x27;0&#x27;+m[2]).slice(-2)+&#x27;-&#x27;+(&#x27;0&#x27;+m[1]).slice(-2);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s) || isNaN(Date.parse(s)) || new Date(s+&#x27;T00:00:00Z&#x27;).toISOString().slice(0,10)!==s)throw new Error(&#x27;Tarikh tidak sah. Gunakan YYYY-MM-DD.&#x27;);
+  return s;
+}
+function url_(v) { v=text_(v); if(v &amp;&amp; !/^https?:\/\/\S+$/i.test(v))throw new Error(&#x27;Pautan mesti bermula dengan https:// atau http://.&#x27;); return v; }
+function cell_(v) { v=text_(v); return /^[=+@-]/.test(v) ? &quot;&#x27;&quot;+v : v; }
+function timestamp_() { return Utilities.formatDate(new Date(),&#x27;Asia/Kuala_Lumpur&#x27;,&quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssXXX&quot;); }
+function json_(value) { return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON); }
+</pre>
             </div>
         </div>
 
@@ -645,6 +713,8 @@ function doGet(e) {
         let verifiedClasses = {}; // Track Guru Kelas verifications
 
         let isGuruLoggedIn = false;
+        let isRumusanLoggedIn = false;
+        const sendingTasks = new Set();
 
         // INITIALIZATION
         window.addEventListener('DOMContentLoaded', () => {
@@ -843,6 +913,45 @@ function doGet(e) {
             });
         }
 
+        function loginRumusan(event) {
+            event.preventDefault();
+            if (document.getElementById('rumusan-password').value !== 'JBA1077') {
+                document.getElementById('rumusan-login-error').textContent = 'Kata laluan salah. Sila cuba lagi.'; return;
+            }
+            isRumusanLoggedIn = true;
+            document.getElementById('rumusan-password').value = '';
+            document.getElementById('rumusan-login-error').textContent = '';
+            document.getElementById('rumusan-login').hidden = true;
+            document.getElementById('rumusan-content').hidden = false;
+            renderRumusanPentadbir();
+        }
+        function logoutRumusan() {
+            isRumusanLoggedIn = false;
+            document.getElementById('rumusan-login').hidden = false;
+            document.getElementById('rumusan-content').hidden = true;
+            document.getElementById('rumusan-password').value = '';
+        }
+        function normalized(value) { return String(value || '').trim().replace(/\s+/g,' ').toUpperCase(); }
+        function hasSubmitted(task, name) {
+            return submissionsList.some(s => normalized(s.namaMurid) === normalized(name) && normalized(s.kelas) === normalized(task.kelas) &&
+                (String(s.taskId || '') === String(task.id) || (!s.taskId && s.tarikh === task.tarikh && normalized(s.subjek) === normalized(task.subjek) && s.tajuk === task.tajuk)));
+        }
+        function pendingKey(task,name) { return 'pdpr-pending-v2:' + JSON.stringify([task.id,normalized(task.kelas),normalized(name)]); }
+        function isPending(task,name) {
+            const key = pendingKey(task,name);
+            if (sendingTasks.has(key)) return true;
+            try { const until=Number(localStorage.getItem(key)); if(until>Date.now())return true; if(until)localStorage.removeItem(key); } catch(e) {}
+            return false;
+        }
+        function rememberPending(task,name) { try { localStorage.setItem(pendingKey(task,name),String(Date.now()+180000)); } catch(e) {} }
+        async function refreshSubmissionRecords() {
+            const controller = new AbortController(); const timer=setTimeout(()=>controller.abort(),20000);
+            try {
+                const response=await fetch(CSV_STATUS_SEMAKAN,{cache:'no-store',signal:controller.signal});
+                if(!response.ok)throw new Error('Rekod penghantaran tidak dapat disemak.');
+                submissionsList=parseSubmissionsCSV(await response.text());
+            } finally {clearTimeout(timer);}
+        }
         // NAVIGATION LOGIC
         function switchTab(tabName) {
             ['murid', 'guru', 'rumusan', 'appscript'].forEach(t => {
@@ -938,7 +1047,7 @@ function doGet(e) {
         function renderMuridTugasan() {
             const selectedTarikh = document.getElementById('murid-filter-tarikh').value;
             const selectedKelas = document.getElementById('murid-filter-kelas').value;
-            const selectedNama = document.getElementById('murid-input-nama').value.trim();
+            const selectedNama = document.getElementById('selected-murid-nama').value.trim();
 
             const container = document.getElementById('container-tugasan-murid');
 
@@ -967,7 +1076,8 @@ function doGet(e) {
 
             container.innerHTML = filtered.map(t => {
                 // Check if already completed by selected student
-                const isCompleted = submissionsList.some(s => s.namaMurid === selectedNama && s.tajuk === t.tajuk && s.subjek === t.subjek && s.tarikh === t.tarikh);
+                const isCompleted = hasSubmitted(t, selectedNama);
+                const pending = selectedNama && isPending(t,selectedNama);
 
                 return `
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between hover:shadow-md transition">
@@ -1016,9 +1126,9 @@ function doGet(e) {
                             ${isCompleted ? `
                                 <div class="bg-green-100 border border-green-300 text-green-800 p-3 rounded-xl text-center font-bold text-xs flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
-                                    ANDA TELAH MENYELESAIKAN TUGASAN INI!
+                                    SUDAH DIHANTAR — PENGHANTARAN SEMULA DISEKAT
                                 </div>
-                            ` : `
+                            ` : pending ? `<div class="bg-amber-100 border border-amber-300 text-amber-900 p-3 rounded-xl text-center text-xs font-bold">PENGHANTARAN SEDANG DISEMAK. Tekan Muat Semula Data. Jika belum direkodkan selepas 3 minit, muat semula dan cuba lagi.</div>` : `
                                 <div class="space-y-3">
                                     <div class="flex items-center gap-2">
                                         <input type="checkbox" id="chk-${t.id}" class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
@@ -1046,64 +1156,36 @@ function doGet(e) {
         // SUBMIT STUDENT COMPLETION
         async function handleMuridSubmit(taskId) {
             if (!requireConnection()) return;
-            const namaMurid = document.getElementById('selected-murid-nama').value;
-            if (!namaMurid) {
-                alert("Sila taip dan pilih Nama Murid anda terlebih dahulu di bahagian atas!");
-                return;
-            }
-
-            const chk = document.getElementById(`chk-${taskId}`);
-            if (!chk || !chk.checked) {
-                alert("Sila tandakan (Tick) kotak 'Sudah Selesai' terlebih dahulu.");
-                return;
-            }
-
-            const task = tasksList.find(t => t.id === taskId);
-            if (!task) return;
-            if (!rawStudentsList.some(m => m.nama === namaMurid && m.kelas === task.kelas)) { alert('Sila pilih murid daripada kelas tugasan ini.'); return; }
-
-            const fileInput = document.getElementById(`file-${taskId}`);
-            let imageBase64 = "";
-
-            if (fileInput && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                imageBase64 = await convertFileToBase64(file);
-            }
-
-            const newSub = {
-                id: 'SUB-' + Date.now(),
-                tarikh: task.tarikh,
-                namaMurid: namaMurid,
-                kelas: task.kelas,
-                subjek: task.subjek,
-                tajuk: task.tajuk,
-                masa: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                status: 'SELESAI',
-                gambarUrl: imageBase64 || 'https://placehold.co/400x300/e2e8f0/475569?text=Tiada+Gambar'
-            };
-
-            submissionsList.unshift(newSub);
-
-            // Send to Google Apps Script Backend (Background Post)
-            fetch(APPSCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'submit_murid',
-                    tarikh: task.tarikh,
-                    namaMurid: namaMurid,
-                    kelas: task.kelas,
-                    subjek: task.subjek,
-                    tajuk: task.tajuk,
-                    imageBase64: imageBase64
-                })
-            }).catch(e => console.warn("AppsScript sync offline/fallback mode. Save not confirmed."));
-
-            alert(`Permintaan penghantaran ${namaMurid} telah dihantar. Tekan Muat Semula Data untuk menyemak sama ada rekod telah disimpan.`);
+            const namaMurid=document.getElementById('selected-murid-nama').value;
+            const task=tasksList.find(t=>t.id===taskId);
+            if(!task || !namaMurid){alert('Sila pilih nama murid dahulu.');return;}
+            if(hasSubmitted(task,namaMurid)){alert('Tugasan ini sudah dihantar. Penghantaran semula tidak dibenarkan.');renderMuridTugasan();return;}
+            if(isPending(task,namaMurid)){alert('Penghantaran sedang disemak. Sila tunggu dan muat semula data.');return;}
+            if(!rawStudentsList.some(m=>m.nama===namaMurid && m.kelas===task.kelas)){alert('Nama murid mesti sepadan dengan kelas tugasan.');return;}
+            const checkbox=document.getElementById('chk-'+taskId);
+            if(!checkbox || !checkbox.checked){alert('Sila tandakan Sudah Selesai.');return;}
+            const file=document.getElementById('file-'+taskId)?.files[0];
+            if(file && (file.size>5*1024*1024 || !['image/jpeg','image/png','image/webp'].includes(file.type))){alert('Gunakan gambar JPG, PNG atau WebP, maksimum 5 MB.');return;}
+            const key=pendingKey(task,namaMurid); sendingTasks.add(key);
             renderMuridTugasan();
-            renderGuruSemakanStatus();
-            renderRumusanPentadbir();
+            try {
+                await refreshSubmissionRecords();
+                if(hasSubmitted(task,namaMurid)){alert('Tugasan ini sudah direkodkan. Penghantaran semula disekat.');return;}
+                const imageBase64=file?await convertFileToBase64(file):'';
+                // A no-cors response cannot confirm a write. Lock briefly while CSV catches up.
+                rememberPending(task,namaMurid);
+                const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),45000);
+                try { await fetch(APPSCRIPT_URL,{method:'POST',mode:'no-cors',signal:controller.signal,
+                    headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'submit_murid',taskId:task.id,
+                    tarikh:task.tarikh,namaMurid,kelas:task.kelas,subjek:task.subjek,tajuk:task.tajuk,imageBase64})});
+                } finally {clearTimeout(timer);}
+                await refreshSubmissionRecords();
+                alert(hasSubmitted(task,namaMurid)?'Tugasan telah direkodkan. Penghantaran semula disekat.':'Permintaan dihantar dan menunggu pengesahan rekod. Tekan Muat Semula Data; jangan hantar berulang kali.');
+            } catch(error) {
+                alert('Simpanan belum dapat disahkan. Semak sambungan dan tekan Muat Semula Data sebelum mencuba lagi.');
+            } finally {
+                sendingTasks.delete(key);renderMuridTugasan();renderGuruSemakanStatus();renderRumusanPentadbir();
+            }
         }
 
         function convertFileToBase64(file) {
@@ -1303,6 +1385,7 @@ function doGet(e) {
 
         // ================= TAB RUMUSAN PENTADBIR =================
         function renderRumusanPentadbir() {
+            if (!isRumusanLoggedIn) return;
             const selectedTarikh = document.getElementById('rumusan-tarikh').value;
 
             const tasksToday = tasksList.filter(t => t.tarikh === selectedTarikh);

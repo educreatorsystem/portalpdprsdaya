@@ -23,3 +23,14 @@ PENTING
 
 KEMAS KINI
 Gantikan fail repository. Naikkan nama cache sw.js daripada v1 kepada v2 (dan seterusnya) apabila mengubah fail aplikasi. Aplikasi menawarkan butang Kemas Kini Aplikasi apabila versi baru tersedia; simpan kerja dahulu.
+
+
+KEMAS KINI V2 — HANTAR SEKALI + LOGIN RUMUSAN
+1. Gantikan fail GitHub dengan kandungan pakej ini.
+2. Code.gs disertakan untuk ditampal ke Apps Script (bukan untuk dijalankan di GitHub). Jika backend 4.1 sebelum ini telah dipasang, kod backend tidak berubah.
+3. Jika belum dipasang: gantikan Code.gs, jalankan semakTetapan(), kemudian Deploy > Manage deployments > Edit > New version > Deploy.
+4. Buka aplikasi dan tekan Kemas Kini Aplikasi apabila muncul.
+5. Kata laluan Rumusan: JBA1077. Login berasingan daripada Portal Guru; perlu login semula selepas refresh. Ini kunci paparan frontend, bukan kawalan akses pada CSV awam.
+6. Semakan penghantaran menggunakan ID tugasan + kelas + nama murid. Tugasan berlainan bagi subjek yang sama masih boleh dihantar.
+7. Backend menyekat rekod berganda dengan semakan dalam ScriptLock walaupun menggunakan peranti berbeza. Rekod berganda lama tidak dipadam.
+8. Penanda permintaan sementara disimpan dalam pelayar selama 3 minit untuk menahan klik berulang semasa CSV belum dikemas kini. Status selesai hanya dipaparkan apabila rekod ditemui dalam CSV. Jika permintaan gagal, muat semula selepas 3 minit untuk mencuba lagi.

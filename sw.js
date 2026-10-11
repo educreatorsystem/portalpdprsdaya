@@ -1,4 +1,4 @@
-const CACHE = 'pdpr-sktd-shell-v1';
+const CACHE = 'pdpr-sktd-shell-v2';
 const PREFIX = 'pdpr-sktd-shell-';
 const ROOT = new URL('./',self.location.href);
 const FILES = ['./','./index.html','./vendor/tailwind.js','./pwa.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/maskable-512.png','./icons/apple-touch-icon.png'];

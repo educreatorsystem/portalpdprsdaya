@@ -1,0 +1,10 @@
+let installPrompt=null;let waitingWorker=null;
+const installButton=document.getElementById('installApp');
+function connectionChanged(){const online=navigator.onLine;document.getElementById('connectionStatus').textContent=online?'● Dalam talian':'● Luar talian';document.getElementById('connectionStatus').style.color=online?'#047857':'#b45309';document.getElementById('offlineNotice').hidden=online;}
+connectionChanged();window.addEventListener('online',()=>{connectionChanged();if(typeof fetchMuridCSV==='function'){fetchMuridCSV();fetchGuruCSV();fetchTugasanCSV();fetchSubmissionsCSV();}});window.addEventListener('offline',connectionChanged);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;installButton.hidden=false;});
+installButton.addEventListener('click',async()=>{if(!installPrompt)return;await installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installButton.hidden=true;});
+window.addEventListener('appinstalled',()=>{installButton.hidden=true;installPrompt=null;});
+document.getElementById('installHelp').onclick=()=>document.getElementById('installDialog').showModal();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(reg=>{function announce(){waitingWorker=reg.waiting;if(waitingWorker)document.getElementById('updateApp').hidden=false;}announce();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)announce();});});}).catch(()=>console.warn('PWA memerlukan HTTPS atau localhost.'));let reloading=false;const hadController=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadController&&!reloading){reloading=true;location.reload();}});}
+document.getElementById('updateApp').onclick=()=>{if(waitingWorker&&confirm('Muat semula aplikasi? Pastikan borang telah disimpan.'))waitingWorker.postMessage({type:'SKIP_WAITING'});};

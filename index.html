@@ -366,13 +366,20 @@
                     </form>
                 </div>
 
-                <section id="manageTasksPanel" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
-<h3 class="text-lg font-bold text-slate-900">Urus Tugasan Dihantar</h3>
-<p class="text-xs text-slate-500">Pilih tugasan untuk membuat pembetulan atau memadamnya. Semak nama guru sebelum mengubah tugasan.</p>
-<div class="flex gap-2 flex-wrap"><input id="manageTaskSearch" class="border rounded-lg px-3 py-2 text-sm flex-grow" aria-label="Cari tugasan" placeholder="Cari nama guru, kelas, subjek atau tajuk..."><button type="button" id="refreshManagedTasks" class="border rounded-lg px-4 py-2 text-sm">Muat semula</button></div>
-<p id="manageTaskStatus" class="text-sm text-slate-500" role="status"></p>
-<div id="manageTaskList" class="space-y-3"></div>
-</section>
+                <section id="manageTasksPanel" aria-labelledby="manageTitle">
+<div class="manage-hero"><div class="manage-hero-copy"><span class="manage-eyebrow">PORTAL GURU / PENGURUSAN TUGASAN</span><h3 id="manageTitle"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Urus Tugasan Dihantar</h3><p>Semak, kemas kini dan urus pembelajaran kelas anda.</p></div><button type="button" id="refreshManagedTasks" class="manage-refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Muat semula</button></div>
+<div class="manage-body">
+<div class="manage-filter-heading"><div><span class="manage-step">01</span><strong>Cari tugasan anda</strong></div><button type="button" id="resetManagedFilters">Reset penapis</button></div>
+<div class="manage-filters">
+<label class="manage-filter"><span><i class="fa-solid fa-school" aria-hidden="true"></i> Kelas</span><select id="manageFilterKelas"><option value="">Semua kelas</option></select></label>
+<label class="manage-filter"><span><i class="fa-solid fa-user" aria-hidden="true"></i> Nama guru</span><select id="manageFilterGuru"><option value="">Semua guru</option></select></label>
+<label class="manage-filter"><span><i class="fa-solid fa-book" aria-hidden="true"></i> Subjek</span><select id="manageFilterSubjek"><option value="">Semua subjek</option></select></label>
+<label class="manage-filter"><span><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Tarikh</span><input id="manageFilterTarikh" type="date"></label>
+<label class="manage-filter manage-search"><span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Kata kunci</span><input id="manageTaskSearch" type="search" placeholder="Taip tajuk, kelas atau nama guru..."></label>
+</div>
+<div class="manage-results-bar"><p id="manageTaskStatus" role="status" aria-live="polite"></p><span class="manage-hint">Pilih Edit untuk membuat pembetulan</span></div>
+<div id="manageTaskList"></div>
+</div></section>
                 <!-- SUB-PANEL 2: STATUS SEMAKAN MURID -->
                 <div id="panelSemakanMurid" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
                     <div class="border-b border-slate-200 pb-3 flex justify-between items-center">

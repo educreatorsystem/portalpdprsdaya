@@ -1,3 +1,7 @@
+# Versi 4 — Paparan pengurusan tugasan
+
+Header gradient, kad tugasan, borang edit berbahagian, penapis kelas/guru/subjek/tarikh serta carian kata kunci. Penapis boleh digabungkan dan direset. Kemas kini fail laman di GitHub; Apps Script versi 3 tidak perlu diubah.
+
 # PdPR SKTD — Versi 3: Edit dan Padam
 
 Kod Apps Script lengkap disertakan dalam `apps-script/Code.gs`. Ikuti `apps-script/PANDUAN_EDIT_PADAM.md` sebelum menggantikan fail laman di GitHub. Tiada kod tambahan berasingan diperlukan.
